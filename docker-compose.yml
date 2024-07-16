@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  flask:
+    container_name: flask
+    build: ./flask
+    ports:
+      - 5000:5000
+    links:
+      - db
+    volumes:
+      - ./flask/:/flask
+    environment:
+        TZ: Asia/Tokyo
+        FLASK_ENV: 'development'    #デバッグモードON
+        FLASK_APP: 'app.py'         #起動用アプリの設定
+    command: flask run -h 0.0.0.0
+
+  db:
+    build: ./mysql-docker
+    platform: linux/amd64
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql-docker/db/data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+
