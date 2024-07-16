@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=database,flask,nextjs
 
 ### Database ###
-/mysql-docker/db/data/
+/mysql/db/data/
 *.accdb
 *.db
 *.dbf

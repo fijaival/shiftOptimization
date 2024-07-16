@@ -16,12 +16,12 @@ services:
     command: flask run -h 0.0.0.0
 
   db:
-    build: ./mysql-docker
+    build: ./mysql
     platform: linux/amd64
     ports:
       - 3306:3306
     volumes:
-      - ./mysql-docker/db/data:/var/lib/mysql
+      - ./mysql/db/data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
