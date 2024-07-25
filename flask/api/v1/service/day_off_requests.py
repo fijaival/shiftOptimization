@@ -12,7 +12,8 @@ def get_all_requests_service(facility_id, year, month):
         request = session.query(DayOffRequest).join(Employee).filter(
             extract('year', DayOffRequest.date) == year,
             extract('month', DayOffRequest.date) == month,
-            Employee.facility_id == facility_id
+            Employee.facility_id == facility_id,
+            Employee.is_delete == 0
         ).all()
         res = DayOffRequestSchema().dump(request, many=True)
         return res
@@ -20,6 +21,7 @@ def get_all_requests_service(facility_id, year, month):
 
 def get_requests_service(facility_id, employee_id, year, month):
     with session_scope() as session:
+        has_employee(facility_id, employee_id, session)
         request = session.query(DayOffRequest).filter(
             extract('year', DayOffRequest.date) == year,
             extract('month', DayOffRequest.date) == month,

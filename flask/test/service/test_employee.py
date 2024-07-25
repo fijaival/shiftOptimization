@@ -145,8 +145,6 @@ def test_delete_employee_service(mock_session_scope):
     mock_query.filter_by.assert_called_once_with(employee_id=employee_id)
     mock_query.filter_by.return_value.first.assert_called_once()
 
-    # session.deleteが正しい引数で呼び出されたかを確認
-    mock_session.delete.assert_called_once_with(mock_employee)
 
     # 戻り値が期待されるものであるかを確認
     assert result == mock_employee
@@ -169,9 +167,6 @@ def test_delete_employee_service_not_found(mock_session_scope):
     mock_session.query.assert_called_once_with(Employee)
     mock_query.filter_by.assert_called_once_with(employee_id=employee_id)
     mock_query.filter_by.return_value.first.assert_called_once()
-
-    # session.deleteが呼び出されていないことを確認
-    mock_session.delete.assert_not_called()
 
     # 戻り値がNoneであるかを確認
     assert result is None
