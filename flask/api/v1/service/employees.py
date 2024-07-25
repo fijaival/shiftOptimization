@@ -9,7 +9,7 @@ from ..utils.validate import validate_data
 
 def get_all_employees_service(facility_id):
     with session_scope() as session:
-        employees = session.query(Employee).filter_by(facility_id=facility_id).all()
+        employees = session.query(Employee).filter_by(facility_id=facility_id,is_delete = 0).all()
         res = EmployeeSchema().dump(employees, many=True)
         return res
 
@@ -25,7 +25,8 @@ def add_employee_service(facility_id, data):
             first_name=data['first_name'],
             last_name=data['last_name'],
             employee_type_id=data['employee_type_id'],
-            facility_id=facility_id
+            facility_id=facility_id,
+            is_delete = 0
         )
         for const_data in data['constraints']:
             found_cons = session.query(Constraint).filter_by(constraint_id=const_data["constraint_id"]).first()
@@ -39,23 +40,27 @@ def add_employee_service(facility_id, data):
             new_employee.dependencies.append(dependency)
         session.add(new_employee)
         session.flush()
+        print(EmployeeSchema().dump(new_employee))
         return EmployeeSchema().dump(new_employee)
 
 
 def delete_employee_service(employee_id):
     with session_scope() as session:
-        employee = session.query(Employee).filter_by(employee_id=employee_id).first()
-        if not employee:
+        employee: Employee = session.query(Employee).filter_by(employee_id=employee_id).first()
+        if not employee or employee.is_delete == 1:
             return None
-        session.delete(employee)
-        return employee
+        employee.is_delete = 1
+        session.add(employee)
+        session.flush()
+        res = EmployeeSchema().dump(employee)
+        return res
 
 
 def update_employee_service(facility_id, employee_id, data):
     with session_scope() as session:
         validate_data(put_employee_schema, data)
-        employee = session.query(Employee).filter_by(employee_id=employee_id, facility_id=facility_id).first()
-        if not employee:
+        employee: Employee = session.query(Employee).filter_by(employee_id=employee_id, facility_id=facility_id).first()
+        if not employee or employee.is_delete == 1:
             raise InvalidAPIUsage("Employee not found", 404)
 
         has_employee_type(data['employee_type_id'], session)

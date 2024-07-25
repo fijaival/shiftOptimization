@@ -24,11 +24,7 @@ def session_scope():
         else:
             raise InvalidAPIUsage("An error occurred while saving the instance", 500)
     except Exception as e:
-        message = "An error occurred while saving the instance"
-        if e.args:
-            message = e.args[0]
-        print(message)
         session.rollback()
-        raise InvalidAPIUsage(message, 500)
+        raise e
     finally:
         session.close()

@@ -33,6 +33,7 @@ class Employee(Base):
     last_name: Mapped[str] = mapped_column(String(100), nullable=False)
     employee_type_id: Mapped[int] = mapped_column(
         Integer, ForeignKey('employee_types.employee_type_id', ondelete='RESTRICT'), nullable=False)
+    is_delete: Mapped[bool] = mapped_column( default=False)
 
     # One to Many
     day_off_requests: Mapped[list["DayOffRequest"]] = relationship(
