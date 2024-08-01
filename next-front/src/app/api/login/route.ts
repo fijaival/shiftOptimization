@@ -4,7 +4,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const res = await fetch("http://localhost:5000/v1/auth/login", {
+    const res: Response = await fetch("http://localhost:5000/v1/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -13,14 +13,14 @@ export async function POST(request: NextRequest) {
     });
     if (res.ok) {
       const setCookieHeader = res.headers.get("set-cookie");
-      const response = NextResponse.redirect(
-        new URL("/dashboard", request.url)
-      );
+      const response = NextResponse.redirect(new URL("/employee", request.url));
 
       if (setCookieHeader) {
         const cookies = setCookieHeader.split(",");
         cookies.forEach((cookie) => {
-          response.headers.append("Set-Cookie", cookie);
+          const token = cookie.split(";")[0];
+          console.log(token);
+          response.headers.append("Set-Cookie", token);
         });
       }
 
