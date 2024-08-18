@@ -11,10 +11,17 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 import { handleLogin } from "../hooks";
-import { LoginFormInputs } from "../type";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { LoginFormInputs, UserType } from "../type";
+import { useAuth } from "@/state/authContext";
 
 export function UserLogin() {
+  const auth = useAuth();
+  if (!auth) {
+    console.error("AuthProviderが適切にラップされていません");
+    return null;
+  }
+  const { setUser } = auth;
+  // const { setUser } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     handleSubmit,
@@ -26,9 +33,12 @@ export function UserLogin() {
   const onSubmit: SubmitHandler<LoginFormInputs> = async (
     data: LoginFormInputs
   ) => {
-    const error: string | null = await handleLogin(data, router);
-    if (error) {
-      setErrorMessage(error);
+    const res: string | UserType = await handleLogin(data, router);
+    if (typeof res == "string") {
+      setErrorMessage(res);
+    } else {
+      console.log(res);
+      setUser(res);
     }
   };
 

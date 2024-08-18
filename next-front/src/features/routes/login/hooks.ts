@@ -1,16 +1,18 @@
 import { login } from "./endpoint";
-import { LoginFormInputs, LoginResponse } from "./type";
+import { LoginFormInputs, UserType } from "./type";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export const handleLogin = async (
   data: LoginFormInputs,
   router: AppRouterInstance
-): Promise<string | null> => {
+): Promise<string | UserType> => {
   try {
-    const response: LoginResponse = await login(data.username, data.password);
-    if (response.redirected) {
-      router.push(response.url);
-      return null;
+    const response: Response = await login(data.username, data.password);
+    if (response.ok) {
+      const body = await response.json();
+      router.push("/employee");
+      console.log(body.user);
+      return body.user;
     } else {
       return "ログインに失敗しました";
     }

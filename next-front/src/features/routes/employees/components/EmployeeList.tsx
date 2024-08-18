@@ -1,10 +1,13 @@
 "use client";
 
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, use } from "react";
 import { handleFetchEmployeesList } from "../hooks";
 import { Employee, EmployeesResponse } from "../type";
-
+import { useAuth } from "@/state/authContext";
+import { Button } from "@chakra-ui/react";
 export const EmployeeList: FC = () => {
+  const { user } = useAuth();
+
   const [employees, setEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
@@ -18,10 +21,12 @@ export const EmployeeList: FC = () => {
     }
     fetchData();
   }, []);
-  console.log(employees);
+
   return (
     <>
       <h1>EmployeeList</h1>
+      {user && <p>{user.username}さん、こんにちは</p>}
+      <Button onClick={() => console.log(user)}>ユーザー情報</Button>
       {employees ? (
         employees.map((employee) => (
           <div key={employee.employee_id}>

@@ -3,9 +3,17 @@ export type LoginFormInputs = {
   password: string;
 };
 
-export type LoginResponse = {
-  redirected: boolean;
-  url: string;
-  status: number;
-  statusText: string;
+type FacilityType = {
+  facility_id: number;
+  name: string;
+};
+
+export type UserType = {
+  created_at: string;
+  facility: FacilityType;
+  facility_id: number;
+  is_admin: boolean;
+  updated_at: string;
+  user_id: number;
+  username: string;
 };
