@@ -29,7 +29,7 @@ def login_user(data):
         if auth_user is not None and auth_user.check_password(data['password']):
             access_token = create_access_token(identity=auth_user.user_id)
             refresh_token = create_refresh_token(identity=auth_user.user_id)
-            resp = jsonify({'login': True})
+            resp = jsonify({"user":UserSchema().dump(auth_user)})
             set_access_cookies(resp, access_token)
             set_refresh_cookies(resp, refresh_token)
             return resp
