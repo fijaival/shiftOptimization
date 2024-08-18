@@ -1,6 +1,8 @@
-export const fetchEmployeesList = async (): Promise<Response> => {
+export const fetchEmployeesList = async (
+  facilityId: number
+): Promise<Response> => {
   try {
-    const response = await fetch("/api/employees", {
+    const response = await fetch(`/api/facilities/${facilityId}/employees`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
