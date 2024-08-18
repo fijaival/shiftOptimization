@@ -15,13 +15,7 @@ import { LoginFormInputs, UserType } from "../type";
 import { useAuth } from "@/state/authContext";
 
 export function UserLogin() {
-  const auth = useAuth();
-  if (!auth) {
-    console.error("AuthProviderが適切にラップされていません");
-    return null;
-  }
-  const { setUser } = auth;
-  // const { setUser } = useAuth();
+  const { setUser } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     handleSubmit,

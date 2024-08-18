@@ -31,8 +31,6 @@ export function useAuth() {
 
 export function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
-  console.log({ user, setUser }); // デバッグ用
-
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       {children}

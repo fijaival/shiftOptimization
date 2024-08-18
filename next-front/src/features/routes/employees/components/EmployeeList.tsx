@@ -13,8 +13,8 @@ export const EmployeeList: FC = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data: EmployeesResponse = await handleFetchEmployeesList();
-        setEmployees(data.employees);
+        const emp: Employee[] = await handleFetchEmployeesList();
+        setEmployees(emp);
       } catch (error) {
         console.error(error);
       }
@@ -25,8 +25,6 @@ export const EmployeeList: FC = () => {
   return (
     <>
       <h1>EmployeeList</h1>
-      {user && <p>{user.username}さん、こんにちは</p>}
-      <Button onClick={() => console.log(user)}>ユーザー情報</Button>
       {employees ? (
         employees.map((employee) => (
           <div key={employee.employee_id}>
