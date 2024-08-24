@@ -4,12 +4,12 @@ import { createContext, useContext, ReactNode, useState } from "react";
 
 export type User = {
   username: string;
-  user_id: number;
-  facility_id: number;
-  is_admin: boolean;
-  created_at: string;
+  userId: number;
+  facilityId: number;
+  isAdmin: boolean;
+  createdAt: string;
   facility: {
-    facility_id: number;
+    facilityId: number;
     name: string;
   };
 };

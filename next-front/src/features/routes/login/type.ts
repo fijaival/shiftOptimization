@@ -4,16 +4,16 @@ export type LoginFormInputs = {
 };
 
 type FacilityType = {
-  facility_id: number;
+  facilityId: number;
   name: string;
 };
 
 export type UserType = {
-  created_at: string;
+  createdAt: string;
   facility: FacilityType;
-  facility_id: number;
-  is_admin: boolean;
-  updated_at: string;
-  user_id: number;
+  facilityId: number;
+  isAdmin: boolean;
+  updatedAt: string;
+  userId: number;
   username: string;
 };

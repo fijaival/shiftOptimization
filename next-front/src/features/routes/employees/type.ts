@@ -1,18 +1,39 @@
 type EmployeeType = {
-  created_at: string;
-  employee_type_id: number;
-  type_name: string;
-  updated_at: string;
+  createdAt: string;
+  employeeTypeId: number;
+  typeName: string;
+  updatedAt: string;
+};
+
+type DependentEmployee = {
+  employeeId: number;
+  firstName: string;
+  lastName: string;
+};
+
+type Dependencies = {
+  dependencyId: number;
+  dependentEmployee: DependentEmployee;
+};
+
+type Constraint = {
+  constraint_id: number;
+  name: string;
+};
+
+type EmployeeConstraints = {
+  constraint: Constraint;
+  value: number;
 };
 
 export type Employee = {
-  dependencies: any[];
-  employee_constraints: any[];
-  employee_id: number;
-  employee_type: EmployeeType;
-  facility_id: number;
-  first_name: string;
-  last_name: string;
+  dependencies: Dependencies[];
+  employeeConstraints: EmployeeConstraints[];
+  employeeId: number;
+  employeeType: EmployeeType;
+  facilityId: number;
+  firstName: string;
+  lastName: string;
   qualifications: any[];
 };
 
