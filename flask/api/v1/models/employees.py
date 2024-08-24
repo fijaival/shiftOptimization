@@ -10,7 +10,7 @@ from .qualifications import Qualification, QualificationSchema
 from .day_off_requests import DayOffRequest
 from .shifts import Shift
 from .employee_types import EmployeeType, EmployeeTypeSchema
-from .employee_constraints import EmployeeConstraint, EmployeeConstraintSchema
+from .employee_constraints import EmployeeConstraint, EmployeeConstraintSchema,ConstraintSchema
 
 
 employee_qualifications = Table(
@@ -86,19 +86,6 @@ class Dependency(Base):
     employee = relationship('Employee', foreign_keys=[employee_id], back_populates='dependencies')
     dependent_employee = relationship('Employee', foreign_keys=[dependent_employee_id], back_populates='dependents')
 
-
-class EmployeeSchema(Schema):
-    employee_id = fields.Int()
-    facility_id = fields.Int()
-    first_name = fields.Str()
-    last_name = fields.Str()
-
-    employee_type = fields.Nested(EmployeeTypeSchema)
-    qualifications = fields.Nested(QualificationSchema, many=True)
-    employee_constraints = fields.Nested(EmployeeConstraintSchema, many=True)
-    dependencies = fields.Nested('DependencySchema', many=True)
-
-
 class DependencySchema(Schema):
     dependency_id = fields.Int()
     employee_id = fields.Int()
@@ -106,3 +93,15 @@ class DependencySchema(Schema):
     created_at = fields.Date(load_only=True)
     updated_at = fields.Date(load_only=True)
     dependent_employee = fields.Nested("EmployeeSchema", only=('employee_id', 'first_name', 'last_name'))
+class EmployeeSchema(Schema):
+    employee_id = fields.Int()
+    facility_id = fields.Int()
+    first_name = fields.Str()
+    last_name = fields.Str()
+
+    employee_type = fields.Nested(EmployeeTypeSchema, only=('employee_type_id', 'type_name'))
+    qualifications = fields.Nested(QualificationSchema, many=True, only=('qualification_id', 'name'))
+    employee_constraints = fields.Nested(EmployeeConstraintSchema, many=True, only=("constraint", "value"))
+    dependencies = fields.Nested(DependencySchema, many=True, only=("dependency_id","dependent_employee"))
+    created_at = fields.Date()
+    updated_at = fields.Date()
