@@ -1,5 +1,6 @@
 import { fetchEmployeesList } from "./endpoint";
 import { EmployeesResponse, Employee } from "./type";
+import humps from "humps";
 
 export const handleFetchEmployeesList = async (
   facilityId: number
@@ -8,7 +9,7 @@ export const handleFetchEmployeesList = async (
     const response = await fetchEmployeesList(facilityId);
     const data: EmployeesResponse = await response.json();
     console.log(data);
-    return data.employees as Employee[];
+    return humps.camelizeKeys(data.employees) as Employee[];
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`${error.message}`);

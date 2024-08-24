@@ -21,20 +21,25 @@ type Constraint = {
   name: string;
 };
 
-type EmployeeConstraints = {
+type EmployeeConstraint = {
   constraint: Constraint;
   value: number;
 };
 
+type Qualification = {
+  qualificationId: number;
+  name: string;
+};
+
 export type Employee = {
   dependencies: Dependencies[];
-  employeeConstraints: EmployeeConstraints[];
+  employeeConstraints: EmployeeConstraint[];
   employeeId: number;
   employeeType: EmployeeType;
   facilityId: number;
   firstName: string;
   lastName: string;
-  qualifications: any[];
+  qualifications: Qualification[];
 };
 
 export type EmployeesResponse = {

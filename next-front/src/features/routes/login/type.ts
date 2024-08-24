@@ -17,3 +17,9 @@ export type UserType = {
   userId: number;
   username: string;
 };
+
+export interface LoginResponse extends Response {
+  data: {
+    user: UserType;
+  };
+}

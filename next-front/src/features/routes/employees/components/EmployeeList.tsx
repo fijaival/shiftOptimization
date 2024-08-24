@@ -11,9 +11,10 @@ export const EmployeeList: FC = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    async function fetchData(facility_id: number) {
+    async function fetchData(facilityId: number) {
       try {
-        const emp: Employee[] = await handleFetchEmployeesList(facility_id);
+        const emp: Employee[] = await handleFetchEmployeesList(facilityId);
+        console.log(emp);
         setEmployees(emp);
       } catch (error) {
         console.error(error);
@@ -21,7 +22,7 @@ export const EmployeeList: FC = () => {
     }
     if (user) {
       console.log(user);
-      fetchData(user.facility_id);
+      fetchData(user.facilityId);
     }
   }, [user]);
 
@@ -33,12 +34,12 @@ export const EmployeeList: FC = () => {
           {employees.map((employee, index) => (
             <EmployeeCard
               key={index}
-              name={employee.first_name}
-              role={employee.first_name}
-              location={employee.first_name}
-              dateJoined={employee.first_name}
-              interests={[employee.first_name]}
-              avatarUrl={employee.first_name}
+              name={employee.firstName + " " + employee.lastName}
+              role={employee.employeeType.typeName}
+              location={employee.firstName}
+              dateJoined={employee.firstName}
+              interests={[employee.firstName]}
+              avatarUrl={employee.firstName}
             />
           ))}
         </SimpleGrid>
