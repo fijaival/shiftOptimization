@@ -16,7 +16,7 @@ cursor = conn.cursor()
 fake = Faker('jp-JP')
 
 # ランダムなデータを生成して挿入
-for _ in range(30):
+for _ in range(1):
     name = fake.name()
     facility = fake.company()
     job = fake.job()
@@ -24,7 +24,12 @@ for _ in range(30):
     facility_id = random.randint(33, 37)    
     is_admin = random.randint(0, 1)
     employee_type_id = random.randint(23, 30)
-    
+    qualification = fake.word() + "資格"
+    constraint = fake.word() + "制約"
+    qualification_id = random.randint(89, 98)
+    constraint_id = random.randint(11, 52)
+    if 21 <= constraint_id <= 32:
+        constraint_id = 33
     
     # cursor.execute(
     #     "INSERT INTO facilities (name,created_at, updated_at) VALUES (%s, %s, %s)",
@@ -41,10 +46,54 @@ for _ in range(30):
     # )
 
     # employeesテーブルへのデータ挿入
-    cursor.execute(
-        "INSERT INTO employees (facility_id, first_name, last_name, employee_type_id, is_delete, created_at, updated_at) VALUES (%s, %s, %s, %s, %s,%s, %s)",
-        (facility_id, fake.first_name(), fake.last_name(), employee_type_id, 0,datetime.now(), datetime.now())  # employee_type_idやis_deleteもランダムで設定
-    )
+    # cursor.execute(
+    #     "INSERT INTO employees (facility_id, first_name, last_name, employee_type_id, is_delete, created_at, updated_at) VALUES (%s, %s, %s, %s, %s,%s, %s)",
+    #     (facility_id, fake.first_name(), fake.last_name(), employee_type_id, 0,datetime.now(), datetime.now())  # employee_type_idやis_deleteもランダムで設定
+    # )
+
+    # qualificationsテーブルへのデータ挿入
+    # cursor.execute(
+    #     "INSERT INTO qualifications (name, created_at, updated_at) VALUES (%s, %s, %s)",
+    #     (qualification, datetime.now(), datetime.now())
+    # )
+
+    # constraintsテーブルへのデータ挿入
+    # cursor.execute(
+    #     "INSERT INTO constraints (name, created_at, updated_at) VALUES (%s, %s, %s)",
+    #     (constraint, datetime.now(), datetime.now())
+    # )
+
+    # facility_qualificationsテーブルへのデータ挿入
+    # cursor.execute(
+    #     "INSERT INTO facility_qualifications (facility_id, qualification_id) VALUES (%s, %s)",
+    #     (facility_id, qualification_id)
+    # )
+
+    # facility_constraintsテーブルへのデータ挿入
+    # cursor.execute(
+    #     "INSERT INTO facility_constraints (facility_id, constraint_id) VALUES (%s, %s)",
+    #     (facility_id, constraint_id)
+    # )
+
+    # # employee_qualificationsテーブルへのデータ挿入
+    # employee_ids = [13,15,20,26,31]
+    # qualification_ids = [89,90,92,93,95,98]
+    # cursor.execute(
+    #     "INSERT INTO employee_qualifications (employee_id, qualification_id) VALUES (%s, %s)",
+    #     (random.choice(employee_ids), random.choice(qualification_ids))
+    # )
+
+    # employee_constraintsテーブルへのデータ挿入
+    # employee_ids = [13,15,20,26,31]
+    # constraint_ids = [12,16,20,33,39,40,43,50]
+    # cursor.execute(
+    #     "INSERT INTO employee_constraints (employee_id, constraint_id, value, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)",
+    #     (random.choice(employee_ids), random.choice(constraint_ids), random.randint(3, 7),datetime.now(), datetime.now())
+    # )
+
+
+    
+
 
 conn.commit()
 cursor.close()
