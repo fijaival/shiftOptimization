@@ -2,28 +2,20 @@
 
 import React, { FC, useState, useEffect } from "react";
 import { handleFetchAllRequests } from "../hooks";
-import { handleFetchEmployeesList } from "../../employees/hooks";
-import { Employee } from "../../employees/type";
 import type { EmployeeRequests } from "../type";
 import { useAuth } from "@/state/authContext";
 import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
   Skeleton,
-  SkeletonCircle,
-  SkeletonText,
   Text,
-  SimpleGrid,
-  Center,
-  Spinner,
   Stack,
+  Input,
 } from "@chakra-ui/react";
 
 const generateAugustDates = () => {
@@ -46,6 +38,10 @@ export const RequestTable: FC = () => {
   const augustDates = generateAugustDates();
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
   const [selectedColumn, setSelectedColumn] = useState<number | null>(null);
+  const [editingCell, setEditingCell] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
 
   useEffect(() => {
     async function fetchData(facilityId: number) {
@@ -71,11 +67,39 @@ export const RequestTable: FC = () => {
     setSelectedColumn(colIndex);
   };
 
+  const handleCellDoubleClick = (rowIndex: number, colIndex: number) => {
+    setEditingCell({ row: rowIndex, col: colIndex });
+  };
+
+  const handleInputChange = (
+    rowIndex: number,
+    colIndex: number,
+    value: string
+  ) => {
+    const updatedRequests = [...requests];
+    const request = updatedRequests[rowIndex].requests.find(
+      (request) => request.date === augustDates[colIndex]
+    );
+    if (request) {
+      request.typeOfVacation = value;
+    } else {
+      updatedRequests[rowIndex].requests.push({
+        date: augustDates[colIndex],
+        typeOfVacation: value,
+      });
+    }
+    setRequests(updatedRequests);
+  };
+
+  const handleInputBlur = () => {
+    setEditingCell(null);
+  };
+
   return (
     <Stack>
       <Text fontSize="3xl">シフト希望</Text>
       {requests.length > 0 ? (
-        <TableContainer maxW="1500px" mx="auto" mb="10">
+        <TableContainer maxW="1500px" mx="auto" mb="10" width="90vw">
           <Table
             variant="simple"
             size="sm"
@@ -95,6 +119,8 @@ export const RequestTable: FC = () => {
                 {augustDates.map((date, colIndex) => (
                   <Th
                     key={date}
+                    onClick={() => handleCellClick(-1, colIndex)}
+                    cursor="pointer"
                     bg={selectedColumn === colIndex ? "orange.400" : "inherit"}
                     color={selectedColumn === colIndex ? "white" : "black"}
                   >
@@ -118,9 +144,16 @@ export const RequestTable: FC = () => {
                   return (
                     <Th
                       key={date}
-                      color={dayOfWeekColor}
+                      onClick={() => handleCellClick(-1, colIndex)}
+                      cursor="pointer"
+                      color={
+                        selectedColumn === colIndex &&
+                        dayOfWeekColor == "inherit"
+                          ? "white"
+                          : dayOfWeekColor
+                      }
                       bg={
-                        selectedColumn === colIndex ? "orange.200" : "inherit"
+                        selectedColumn === colIndex ? "orange.400" : "inherit"
                       }
                     >
                       {dayOfWeek}
@@ -145,10 +178,18 @@ export const RequestTable: FC = () => {
                     const request = employeeData.requests.find(
                       (request) => request.date === date
                     );
+                    const isEditing =
+                      editingCell &&
+                      editingCell.row === rowIndex &&
+                      editingCell.col === colIndex;
+
                     return (
                       <Td
                         key={date}
                         onClick={() => handleCellClick(rowIndex, colIndex)}
+                        onDoubleClick={() =>
+                          handleCellDoubleClick(rowIndex, colIndex)
+                        }
                         cursor="pointer"
                         bg={
                           selectedRow === rowIndex ||
@@ -157,7 +198,29 @@ export const RequestTable: FC = () => {
                             : "inherit"
                         }
                       >
-                        {request ? request.typeOfVacation : ""}
+                        {isEditing ? (
+                          <Input
+                            margin="0"
+                            padding="0"
+                            width="100%"
+                            height="100%"
+                            value={request ? request.typeOfVacation : ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                rowIndex,
+                                colIndex,
+                                e.target.value
+                              )
+                            }
+                            onBlur={handleInputBlur}
+                            size="sm"
+                            autoFocus
+                          />
+                        ) : request ? (
+                          request.typeOfVacation
+                        ) : (
+                          ""
+                        )}
                       </Td>
                     );
                   })}
