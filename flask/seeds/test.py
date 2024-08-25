@@ -16,7 +16,7 @@ cursor = conn.cursor()
 fake = Faker('jp-JP')
 
 # ランダムなデータを生成して挿入
-for _ in range(1):
+for _ in range(10):
     name = fake.name()
     facility = fake.company()
     job = fake.job()
@@ -89,6 +89,15 @@ for _ in range(1):
     # cursor.execute(
     #     "INSERT INTO employee_constraints (employee_id, constraint_id, value, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)",
     #     (random.choice(employee_ids), random.choice(constraint_ids), random.randint(3, 7),datetime.now(), datetime.now())
+    # )
+
+    # day_off_requestsテーブルへのデータ挿入
+    # employee_ids = [13, 15, 20, 26, 31, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+    # type_of_vacations = ["×", "有", "前×", "後×"]
+    # date = f"2024-08-{random.randint(1,31):02d}"
+    # cursor.execute(
+    #     "INSERT INTO day_off_requests (employee_id, date, type_of_vacation, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)",
+    #     (random.choice(employee_ids), date, random.choice(type_of_vacations), datetime.now(), datetime.now())
     # )
 
 

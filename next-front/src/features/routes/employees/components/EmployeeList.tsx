@@ -20,8 +20,7 @@ export const EmployeeList: FC = () => {
         console.error(error);
       }
     }
-    if (user) {
-      console.log(user);
+    if (user && user.facilityId) {
       fetchData(user.facilityId);
     }
   }, [user]);
@@ -29,7 +28,7 @@ export const EmployeeList: FC = () => {
   return (
     <Stack>
       <Text fontSize="5xl">従業員一覧</Text>
-      {employees ? (
+      {employees.length > 0 ? (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} padding={6}>
           {employees.map((employee, index) => (
             <EmployeeCard

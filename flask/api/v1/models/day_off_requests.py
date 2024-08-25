@@ -4,6 +4,8 @@ from datetime import date as dt_date
 from sqlalchemy import String, Date, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from marshmallow import Schema, fields
+from collections import defaultdict
+
 
 
 class DayOffRequest(Base):
@@ -20,13 +22,13 @@ class DayOffRequest(Base):
         UniqueConstraint('employee_id', 'date', name='uq_day_off_request'),
     )
 
-
 class DayOffRequestSchema(Schema):
-    request_id = fields.Int()
-    employee_id = fields.Int(required=True)
-    date = fields.Date(required=True)
-    type_of_vacation = fields.Str(required=True)
-    created_at = fields.DateTime(dump_only=True)
-    updated_at = fields.DateTime(dump_only=True)
+    date = fields.Date(format="%Y-%m-%d")
+    type_of_vacation = fields.Str()
 
+class GetAllRequestSchema(Schema):
     employee = fields.Nested('EmployeeSchema', only=('employee_id', 'first_name', 'last_name'))
+    requests = fields.List(fields.Nested(DayOffRequestSchema))    
+
+getAllRequestSchema  = GetAllRequestSchema(many=True)
+getIndividualRequestSchema = DayOffRequestSchema(many=True)
