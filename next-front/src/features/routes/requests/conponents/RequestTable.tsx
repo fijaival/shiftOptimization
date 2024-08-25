@@ -16,6 +16,7 @@ import {
   Text,
   Stack,
   Input,
+  InputLeftElement,
 } from "@chakra-ui/react";
 
 const generateAugustDates = () => {
@@ -185,6 +186,8 @@ export const RequestTable: FC = () => {
 
                     return (
                       <Td
+                        padding="0"
+                        textAlign="center"
                         key={date}
                         onClick={() => handleCellClick(rowIndex, colIndex)}
                         onDoubleClick={() =>
@@ -199,23 +202,22 @@ export const RequestTable: FC = () => {
                         }
                       >
                         {isEditing ? (
-                          <Input
-                            margin="0"
-                            padding="0"
-                            width="100%"
-                            height="100%"
-                            value={request ? request.typeOfVacation : ""}
-                            onChange={(e) =>
-                              handleInputChange(
-                                rowIndex,
-                                colIndex,
-                                e.target.value
-                              )
-                            }
-                            onBlur={handleInputBlur}
-                            size="sm"
-                            autoFocus
-                          />
+                          <form action="#" onSubmit={handleInputBlur}>
+                            <Input
+                              padding="0"
+                              value={request ? request.typeOfVacation : ""}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  rowIndex,
+                                  colIndex,
+                                  e.target.value
+                                )
+                              }
+                              onBlur={handleInputBlur}
+                              size="sm"
+                              autoFocus
+                            />
+                          </form>
                         ) : request ? (
                           request.typeOfVacation
                         ) : (
