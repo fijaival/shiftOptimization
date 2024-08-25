@@ -1,10 +1,12 @@
 from datetime import datetime
 from sqlalchemy import extract
-from ..models import DayOffRequest, Employee, DayOffRequestSchema
+from typing import List
+from ..models import DayOffRequest, Employee, DayOffRequestSchema,getAllRequestSchema,getIndividualRequestSchema
 from ..validators import post_day_off_request_schema, put_day_off_request_schema
 from ..utils.context_maneger import session_scope
 from ..utils.validate import validate_data
 from ..utils.has_employee import has_employee
+from collections import defaultdict
 
 
 def get_all_requests_service(facility_id, year, month):
@@ -15,9 +17,17 @@ def get_all_requests_service(facility_id, year, month):
             Employee.facility_id == facility_id,
             Employee.is_delete == 0
         ).all()
-        res = DayOffRequestSchema().dump(request, many=True)
-        return res
 
+        employee_requests = defaultdict(list)
+        for req in request:
+            employee_requests[req.employee].append(req)
+        # result = output_schema.dump(request)
+        # print(result)
+        # res = DayOffRequestSchema().dump(request, many=True)
+        res = getAllRequestSchema.dump([
+            {"employee": emp, "requests": reqs} for emp, reqs in employee_requests.items()
+        ])
+        return res
 
 def get_requests_service(facility_id, employee_id, year, month):
     with session_scope() as session:
@@ -27,7 +37,7 @@ def get_requests_service(facility_id, employee_id, year, month):
             extract('month', DayOffRequest.date) == month,
             DayOffRequest.employee_id == employee_id
         ).all()
-        res = DayOffRequestSchema().dump(request, many=True)
+        res = getIndividualRequestSchema.dump(request)
         return res
 
 
