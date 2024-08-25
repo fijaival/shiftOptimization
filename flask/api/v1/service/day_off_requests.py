@@ -7,20 +7,23 @@ from ..utils.context_maneger import session_scope
 from ..utils.validate import validate_data
 from ..utils.has_employee import has_employee
 from collections import defaultdict
+from sqlalchemy.orm import joinedload
 
 
 def get_all_requests_service(facility_id, year, month):
     with session_scope() as session:
-        request = session.query(DayOffRequest).join(Employee).filter(
-            extract('year', DayOffRequest.date) == year,
-            extract('month', DayOffRequest.date) == month,
+        results = session.query(Employee, DayOffRequest).outerjoin(DayOffRequest).filter(
             Employee.facility_id == facility_id,
             Employee.is_delete == 0
-        ).all()
+        ).options(joinedload(Employee.day_off_requests)).all()
 
         employee_requests = defaultdict(list)
-        for req in request:
-            employee_requests[req.employee].append(req)
+        for emp, req in results:
+            if req is not None:
+                employee_requests[emp].append(req)
+            else:
+                employee_requests[emp] = []
+
         res = getAllRequestSchema.dump([
             {"employee": emp, "requests": reqs} for emp, reqs in employee_requests.items()
         ])
