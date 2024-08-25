@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <>
       <Header />
-      <Box display="flex" justifyContent="center" h="40" pt="16">
+      <Box display="flex" justifyContent="center" pt="16">
         {children}
       </Box>
     </>
