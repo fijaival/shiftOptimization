@@ -93,7 +93,7 @@ for _ in range(10):
 
     # day_off_requestsテーブルへのデータ挿入
     # employee_ids = [13, 15, 20, 26, 31, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
-    # type_of_vacations = ["有給", "特休", "代休", "慶休", "産休", "育休", "公休"]
+    # type_of_vacations = ["×", "有", "前×", "後×"]
     # date = f"2024-08-{random.randint(1,31):02d}"
     # cursor.execute(
     #     "INSERT INTO day_off_requests (employee_id, date, type_of_vacation, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)",
