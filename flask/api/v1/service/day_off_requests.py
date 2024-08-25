@@ -21,9 +21,6 @@ def get_all_requests_service(facility_id, year, month):
         employee_requests = defaultdict(list)
         for req in request:
             employee_requests[req.employee].append(req)
-        # result = output_schema.dump(request)
-        # print(result)
-        # res = DayOffRequestSchema().dump(request, many=True)
         res = getAllRequestSchema.dump([
             {"employee": emp, "requests": reqs} for emp, reqs in employee_requests.items()
         ])
