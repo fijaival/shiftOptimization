@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC, useState, useEffect } from "react";
-import { handleFetchAllRequests } from "../hooks";
+import { handleFetchAllRequests, addRequest } from "../hooks";
 import type { EmployeeRequests } from "../type";
 import { useAuth } from "@/state/authContext";
 import {
@@ -15,8 +15,7 @@ import {
   Skeleton,
   Text,
   Stack,
-  Input,
-  InputLeftElement,
+  Select,
 } from "@chakra-ui/react";
 
 const generateAugustDates = () => {
@@ -89,7 +88,13 @@ export const RequestTable: FC = () => {
         typeOfVacation: value,
       });
     }
+    if (!user) return;
+    addRequest(user.facilityId, updatedRequests[rowIndex].employee.employeeId, {
+      date: augustDates[colIndex],
+      typeOfVacation: value,
+    });
     setRequests(updatedRequests);
+    setEditingCell(null);
   };
 
   const handleInputBlur = () => {
@@ -202,22 +207,26 @@ export const RequestTable: FC = () => {
                         }
                       >
                         {isEditing ? (
-                          <form action="#" onSubmit={handleInputBlur}>
-                            <Input
-                              padding="0"
-                              value={request ? request.typeOfVacation : ""}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  rowIndex,
-                                  colIndex,
-                                  e.target.value
-                                )
-                              }
-                              onBlur={handleInputBlur}
-                              size="sm"
-                              autoFocus
-                            />
-                          </form>
+                          <Select
+                            padding="0"
+                            value={request ? request.typeOfVacation : ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                rowIndex,
+                                colIndex,
+                                e.target.value
+                              )
+                            }
+                            onBlur={handleInputBlur}
+                            size="sm"
+                            autoFocus
+                          >
+                            <option value=""></option>
+                            <option value="×">×</option>
+                            <option value="有">有</option>
+                            <option value="前×">前×</option>
+                            <option value="後×">後×</option>
+                          </Select>
                         ) : request ? (
                           request.typeOfVacation
                         ) : (

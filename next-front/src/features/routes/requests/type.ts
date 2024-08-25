@@ -17,3 +17,10 @@ export type EmployeeRequests = {
 export type AllRequestsResponse = {
   requests: EmployeeRequests[] | [];
 };
+
+export type CreateRequestReqestBody = {
+  date: string;
+  typeOfVacation: string;
+};
+
+export type CreateRequestResponse = CreateRequestReqestBody;
