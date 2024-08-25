@@ -46,7 +46,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({
     >
       <HStack spacing={4} justifyContent="space-between">
         <HStack spacing={4}>
-          <Avatar src={avatarUrl} size="lg" />
+          <Avatar size="lg" />
           <VStack align="start" spacing={1}>
             <Text fontWeight="bold" fontSize="lg">
               {name}
