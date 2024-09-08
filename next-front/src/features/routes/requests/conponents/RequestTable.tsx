@@ -305,9 +305,18 @@ export const RequestTable: FC = () => {
         </TableContainer>
       ) : (
         <Stack>
-          <Skeleton height="100px" />
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
+          <Skeleton height="80px" width="90vw" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
         </Stack>
       )}
     </Stack>
