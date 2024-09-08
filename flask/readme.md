@@ -58,7 +58,7 @@ python -m venv .venv
 .venv\Scripts\activate.bat
 ```
 
-パッケージをインストールします。
+パッケージをインストールします
 
 ```
 pip install -r requirements.txt
