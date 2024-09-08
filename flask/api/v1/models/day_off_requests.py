@@ -23,6 +23,7 @@ class DayOffRequest(Base):
     )
 
 class DayOffRequestSchema(Schema):
+    request_id = fields.Int()
     date = fields.Date(format="%Y-%m-%d")
     type_of_vacation = fields.Str()
 

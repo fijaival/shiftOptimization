@@ -5,6 +5,7 @@ type Employee = {
 };
 
 type Request = {
+  requestId: number;
   date: string;
   typeOfVacation: string;
 };
@@ -23,4 +24,9 @@ export type CreateRequestReqestBody = {
   typeOfVacation: string;
 };
 
-export type CreateRequestResponse = CreateRequestReqestBody;
+export type UpdateRequestRequsetBody = {
+  typeOfVacation: string;
+};
+
+export type CreateRequestResponse = Request;
+export type UpdateRequestResponse = Request;

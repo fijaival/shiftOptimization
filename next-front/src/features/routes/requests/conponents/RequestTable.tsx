@@ -1,22 +1,23 @@
 "use client";
 
-import React, { FC, useState, useEffect } from "react";
-import { handleFetchAllRequests, addRequest } from "../hooks";
-import type { EmployeeRequests } from "../type";
 import { useAuth } from "@/state/authContext";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  Skeleton,
-  Text,
-  Stack,
   Select,
+  Skeleton,
+  Stack,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useToast,
 } from "@chakra-ui/react";
+import { FC, useEffect, useState } from "react";
+import { addRequest, handleFetchAllRequests, updateRequest } from "../hooks";
+import type { EmployeeRequests } from "../type";
 
 const generateAugustDates = () => {
   const dates = [];
@@ -42,6 +43,7 @@ export const RequestTable: FC = () => {
     row: number;
     col: number;
   } | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     async function fetchData(facilityId: number) {
@@ -51,7 +53,7 @@ export const RequestTable: FC = () => {
           "2024",
           "8"
         );
-        console.log(req);
+        console.log(JSON.parse(JSON.stringify(req)));
         setRequests(req);
       } catch (error) {
         console.error(error);
@@ -71,30 +73,76 @@ export const RequestTable: FC = () => {
     setEditingCell({ row: rowIndex, col: colIndex });
   };
 
-  const handleInputChange = (
+  const handleInputChange = async (
     rowIndex: number,
     colIndex: number,
     value: string
   ) => {
-    const updatedRequests = [...requests];
-    const request = updatedRequests[rowIndex].requests.find(
+    setEditingCell(null);
+    if (!user) return;
+    const empRequest = requests[rowIndex];
+    const originalRequests: EmployeeRequests[] = JSON.parse(
+      JSON.stringify(requests)
+    );
+    const updatedRequests: EmployeeRequests[] = JSON.parse(
+      JSON.stringify(requests)
+    );
+
+    // 画面の即時変更
+    const updatedRequestIndex = updatedRequests[rowIndex].requests.findIndex(
       (request) => request.date === augustDates[colIndex]
     );
-    if (request) {
-      request.typeOfVacation = value;
+    if (updatedRequestIndex !== -1) {
+      updatedRequests[rowIndex].requests[updatedRequestIndex].typeOfVacation =
+        value;
     } else {
       updatedRequests[rowIndex].requests.push({
         date: augustDates[colIndex],
+        requestId: -1,
         typeOfVacation: value,
       });
     }
-    if (!user) return;
-    addRequest(user.facilityId, updatedRequests[rowIndex].employee.employeeId, {
-      date: augustDates[colIndex],
-      typeOfVacation: value,
-    });
     setRequests(updatedRequests);
-    setEditingCell(null);
+    try {
+      const request = empRequest.requests.find(
+        (request) =>
+          request.date === augustDates[colIndex] && request.requestId !== -1
+      );
+      if (request) {
+        await updateRequest(
+          user.facilityId,
+          empRequest.employee.employeeId,
+          request.requestId,
+          { typeOfVacation: value }
+        );
+      } else {
+        const newRequest = await addRequest(
+          user.facilityId,
+          empRequest.employee.employeeId,
+          {
+            date: augustDates[colIndex],
+            typeOfVacation: value,
+          }
+        );
+        const addedRequestIndex = updatedRequests[rowIndex].requests.findIndex(
+          (req) => req.date === augustDates[colIndex] && req.requestId === -1
+        );
+        updatedRequests[rowIndex].requests[addedRequestIndex].requestId =
+          newRequest.requestId; // 返ってきたIDに更新
+        setRequests([...updatedRequests]);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "休み希望の更新に失敗しました",
+        description: "もう一度お試しください。",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      });
+      setRequests(originalRequests);
+    }
   };
 
   const handleInputBlur = () => {
@@ -111,6 +159,7 @@ export const RequestTable: FC = () => {
             size="sm"
             colorScheme="orange"
             sx={{
+              borderCollapse: "collapse",
               "& td, & th": {
                 border: "1px solid",
                 borderColor: "orange.200",
@@ -119,7 +168,7 @@ export const RequestTable: FC = () => {
           >
             <Thead>
               <Tr>
-                <Th position="sticky" left={0} zIndex={1} bg="white">
+                <Th position="sticky" bg="white">
                   従業員
                 </Th>
                 {augustDates.map((date, colIndex) => (
@@ -135,7 +184,7 @@ export const RequestTable: FC = () => {
                 ))}
               </Tr>
               <Tr>
-                <Th position="sticky" left={0} zIndex={1} bg="white">
+                <Th position="sticky" bg="white">
                   曜日
                 </Th>
                 {augustDates.map((date, colIndex) => {
@@ -181,8 +230,8 @@ export const RequestTable: FC = () => {
                     color={selectedRow === rowIndex ? "white" : "black"}
                   >{`${employeeData.employee.lastName} ${employeeData.employee.firstName}`}</Td>
                   {augustDates.map((date, colIndex) => {
-                    const request = employeeData.requests.find(
-                      (request) => request.date === date
+                    const dayReqest = employeeData.requests.find(
+                      (req) => req.date === date
                     );
                     const isEditing =
                       editingCell &&
@@ -209,7 +258,7 @@ export const RequestTable: FC = () => {
                         {isEditing ? (
                           <Select
                             padding="0"
-                            value={request ? request.typeOfVacation : ""}
+                            value={dayReqest ? dayReqest.typeOfVacation : ""}
                             onChange={(e) =>
                               handleInputChange(
                                 rowIndex,
@@ -227,8 +276,8 @@ export const RequestTable: FC = () => {
                             <option value="前×">前×</option>
                             <option value="後×">後×</option>
                           </Select>
-                        ) : request ? (
-                          request.typeOfVacation
+                        ) : dayReqest ? (
+                          dayReqest.typeOfVacation
                         ) : (
                           ""
                         )}
