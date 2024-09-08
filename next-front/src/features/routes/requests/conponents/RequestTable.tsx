@@ -1,7 +1,10 @@
 "use client";
 
 import { useAuth } from "@/state/authContext";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
+  Box,
+  IconButton,
   Select,
   Skeleton,
   Stack,
@@ -24,10 +27,12 @@ import {
 } from "../hooks";
 import type { EmployeeRequests } from "../type";
 
-const generateAugustDates = () => {
+const generateDates = (year: string, month: string) => {
   const dates = [];
-  for (let day = 1; day <= 31; day++) {
-    dates.push(`2024-08-${day.toString().padStart(2, "0")}`);
+  const paddedMonth = month.padStart(2, "0"); // monthを2桁にパディング
+  const daysInMonth = new Date(parseInt(year), parseInt(month), 0).getDate(); // 指定された月の日数を取得
+  for (let day = 1; day <= daysInMonth; day++) {
+    dates.push(`${year}-${paddedMonth}-${day.toString().padStart(2, "0")}`);
   }
   return dates;
 };
@@ -41,7 +46,17 @@ const getDayOfWeek = (dateString: string) => {
 export const RequestTable: FC = () => {
   const [requests, setRequests] = useState<EmployeeRequests[]>([]);
   const { user } = useAuth();
-  const augustDates = generateAugustDates();
+  const [month, setMonth] = useState<string>(
+    (new Date().getMonth() + 2).toString()
+  );
+
+  const [year, setYear] = useState<string>(
+    month === "1"
+      ? (new Date().getFullYear() + 1).toString()
+      : new Date().getFullYear().toString()
+  );
+
+  const dates = generateDates(year, month);
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
   const [selectedColumn, setSelectedColumn] = useState<number | null>(null);
   const [editingCell, setEditingCell] = useState<{
@@ -55,10 +70,9 @@ export const RequestTable: FC = () => {
       try {
         const req: EmployeeRequests[] = await handleFetchAllRequests(
           facilityId,
-          "2024",
-          "8"
+          year,
+          month
         );
-        console.log(JSON.parse(JSON.stringify(req)));
         setRequests(req);
       } catch (error) {
         console.error(error);
@@ -67,7 +81,7 @@ export const RequestTable: FC = () => {
     if (user && user.facilityId) {
       fetchData(user.facilityId);
     }
-  }, [user]);
+  }, [user, month]);
 
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     setSelectedRow(rowIndex);
@@ -92,7 +106,7 @@ export const RequestTable: FC = () => {
 
     // 画面の即時変更
     const updatedRequestIndex = updatedRequests[rowIndex].requests.findIndex(
-      (request) => request.date === augustDates[colIndex]
+      (request) => request.date === dates[colIndex]
     );
     if (updatedRequestIndex !== -1) {
       if (value === "") {
@@ -103,7 +117,7 @@ export const RequestTable: FC = () => {
       }
     } else {
       updatedRequests[rowIndex].requests.push({
-        date: augustDates[colIndex],
+        date: dates[colIndex],
         requestId: -1,
         typeOfVacation: value,
       });
@@ -112,7 +126,7 @@ export const RequestTable: FC = () => {
     try {
       const request = empRequest.requests.find(
         (request) =>
-          request.date === augustDates[colIndex] && request.requestId !== -1
+          request.date === dates[colIndex] && request.requestId !== -1
       );
       if (request) {
         // valueが空の場合は削除
@@ -135,12 +149,12 @@ export const RequestTable: FC = () => {
           user.facilityId,
           empRequest.employee.employeeId,
           {
-            date: augustDates[colIndex],
+            date: dates[colIndex],
             typeOfVacation: value,
           }
         );
         const addedRequestIndex = updatedRequests[rowIndex].requests.findIndex(
-          (req) => req.date === augustDates[colIndex] && req.requestId === -1
+          (req) => req.date === dates[colIndex] && req.requestId === -1
         );
         updatedRequests[rowIndex].requests[addedRequestIndex].requestId =
           newRequest.requestId; // 返ってきたIDに更新
@@ -163,10 +177,45 @@ export const RequestTable: FC = () => {
   const handleInputBlur = () => {
     setEditingCell(null);
   };
+  const handlePrevMonth = () => {
+    if (month == "1") {
+      setMonth("12");
+      setYear((parseInt(year) - 1).toString());
+    } else {
+      setMonth((parseInt(month) - 1).toString());
+    }
+  };
+  const handleNextMonth = () => {
+    if (month == "12") {
+      setMonth("1");
+      setYear((parseInt(year) + 1).toString());
+    } else {
+      setMonth((parseInt(month) + 1).toString());
+    }
+  };
 
   return (
     <Stack>
-      <Text fontSize="3xl">シフト希望</Text>
+      <Box justifyContent="center" alignItems="center" display="flex">
+        <IconButton
+          colorScheme="orange"
+          fontSize="20px"
+          aria-label="move to prev month"
+          icon={<ChevronLeftIcon />}
+          onClick={handlePrevMonth}
+        ></IconButton>
+        <Text fontSize="3xl" sx={{ px: "5" }}>
+          {month}月シフト希望
+        </Text>
+        <IconButton
+          colorScheme="orange"
+          fontSize="20px"
+          aria-label="move to next month"
+          icon={<ChevronRightIcon />}
+          onClick={handleNextMonth}
+        ></IconButton>
+      </Box>
+
       {requests.length > 0 ? (
         <TableContainer
           maxW="1500px"
@@ -194,7 +243,7 @@ export const RequestTable: FC = () => {
                 <Th position="sticky" bg="white" left={0} top={0} zIndex={3}>
                   従業員
                 </Th>
-                {augustDates.map((date, colIndex) => (
+                {dates.map((date, colIndex) => (
                   <Th
                     key={date}
                     onClick={() => handleCellClick(-1, colIndex)}
@@ -213,7 +262,7 @@ export const RequestTable: FC = () => {
                 <Th position="sticky" bg="white" left={0} top="24px" zIndex={3}>
                   曜日
                 </Th>
-                {augustDates.map((date, colIndex) => {
+                {dates.map((date, colIndex) => {
                   const dayOfWeek = getDayOfWeek(date);
                   const dayOfWeekColor =
                     dayOfWeek === "日"
@@ -256,7 +305,7 @@ export const RequestTable: FC = () => {
                     bg={selectedRow === rowIndex ? "orange.400" : "white"}
                     color={selectedRow === rowIndex ? "white" : "black"}
                   >{`${employeeData.employee.lastName} ${employeeData.employee.firstName}`}</Td>
-                  {augustDates.map((date, colIndex) => {
+                  {dates.map((date, colIndex) => {
                     const dayReqest = employeeData.requests.find(
                       (req) => req.date === date
                     );
