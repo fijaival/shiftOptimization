@@ -16,7 +16,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
-import { addRequest, handleFetchAllRequests, updateRequest } from "../hooks";
+import {
+  addRequest,
+  deleteRequest,
+  handleFetchAllRequests,
+  updateRequest,
+} from "../hooks";
 import type { EmployeeRequests } from "../type";
 
 const generateAugustDates = () => {
@@ -67,9 +72,6 @@ export const RequestTable: FC = () => {
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     setSelectedRow(rowIndex);
     setSelectedColumn(colIndex);
-  };
-
-  const handleCellDoubleClick = (rowIndex: number, colIndex: number) => {
     setEditingCell({ row: rowIndex, col: colIndex });
   };
 
@@ -93,8 +95,12 @@ export const RequestTable: FC = () => {
       (request) => request.date === augustDates[colIndex]
     );
     if (updatedRequestIndex !== -1) {
-      updatedRequests[rowIndex].requests[updatedRequestIndex].typeOfVacation =
-        value;
+      if (value === "") {
+        updatedRequests[rowIndex].requests.splice(updatedRequestIndex, 1);
+      } else {
+        updatedRequests[rowIndex].requests[updatedRequestIndex].typeOfVacation =
+          value;
+      }
     } else {
       updatedRequests[rowIndex].requests.push({
         date: augustDates[colIndex],
@@ -109,12 +115,21 @@ export const RequestTable: FC = () => {
           request.date === augustDates[colIndex] && request.requestId !== -1
       );
       if (request) {
-        await updateRequest(
-          user.facilityId,
-          empRequest.employee.employeeId,
-          request.requestId,
-          { typeOfVacation: value }
-        );
+        // valueが空の場合は削除
+        if (value === "") {
+          await deleteRequest(
+            user.facilityId,
+            empRequest.employee.employeeId,
+            request.requestId
+          );
+        } else {
+          await updateRequest(
+            user.facilityId,
+            empRequest.employee.employeeId,
+            request.requestId,
+            { typeOfVacation: value }
+          );
+        }
       } else {
         const newRequest = await addRequest(
           user.facilityId,
@@ -168,7 +183,7 @@ export const RequestTable: FC = () => {
           >
             <Thead>
               <Tr>
-                <Th position="sticky" bg="white">
+                <Th position="sticky" bg="white" left={0} zIndex={1}>
                   従業員
                 </Th>
                 {augustDates.map((date, colIndex) => (
@@ -184,7 +199,7 @@ export const RequestTable: FC = () => {
                 ))}
               </Tr>
               <Tr>
-                <Th position="sticky" bg="white">
+                <Th position="sticky" bg="white" left={0} zIndex={1}>
                   曜日
                 </Th>
                 {augustDates.map((date, colIndex) => {
@@ -244,9 +259,6 @@ export const RequestTable: FC = () => {
                         textAlign="center"
                         key={date}
                         onClick={() => handleCellClick(rowIndex, colIndex)}
-                        onDoubleClick={() =>
-                          handleCellDoubleClick(rowIndex, colIndex)
-                        }
                         cursor="pointer"
                         bg={
                           selectedRow === rowIndex ||
@@ -257,7 +269,6 @@ export const RequestTable: FC = () => {
                       >
                         {isEditing ? (
                           <Select
-                            padding="0"
                             value={dayReqest ? dayReqest.typeOfVacation : ""}
                             onChange={(e) =>
                               handleInputChange(
@@ -269,8 +280,11 @@ export const RequestTable: FC = () => {
                             onBlur={handleInputBlur}
                             size="sm"
                             autoFocus
+                            sx={{
+                              px: 0,
+                            }}
                           >
-                            <option value=""></option>
+                            <option value=""> </option>
                             <option value="×">×</option>
                             <option value="有">有</option>
                             <option value="前×">前×</option>

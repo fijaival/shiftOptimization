@@ -24,3 +24,25 @@ export async function PUT(
     return NextResponse.json({ error }, { status: res.status });
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  {
+    params,
+  }: { params: { facilityId: string; employeeId: string; requestsId: string } }
+) {
+  const facilityId = params.facilityId;
+  const employeeId = params.employeeId;
+  const requestId = params.requestsId;
+  const res = await fetchFromAPI(
+    `http://localhost:5000/v1/facilities/${facilityId}/employees/${employeeId}/requests/${requestId}`,
+    "DELETE",
+    request
+  );
+  if (res.ok) {
+    return res;
+  } else {
+    const error = await res.json();
+    return NextResponse.json({ error }, { status: res.status });
+  }
+}

@@ -68,3 +68,29 @@ export const updateRequest = async (
     }
   }
 };
+
+export const deleteRequest = async (
+  facilityId: number,
+  employeeId: number,
+  requestId: number
+): Promise<void> => {
+  try {
+    const response = await fetch(
+      `/api/facilities/${facilityId}/employees/${employeeId}/requests/${requestId}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+    return;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`${error.message}`);
+    } else {
+      throw new Error("Error");
+    }
+  }
+};
