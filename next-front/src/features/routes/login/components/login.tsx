@@ -31,7 +31,6 @@ export function UserLogin() {
     if (typeof res == "string") {
       setErrorMessage(res);
     } else {
-      console.log(res);
       setUser(res);
     }
   };

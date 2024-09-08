@@ -14,7 +14,6 @@ export const EmployeeList: FC = () => {
     async function fetchData(facilityId: number) {
       try {
         const emp: Employee[] = await handleFetchEmployeesList(facilityId);
-        console.log(emp);
         setEmployees(emp);
       } catch (error) {
         console.error(error);

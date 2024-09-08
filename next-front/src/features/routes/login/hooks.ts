@@ -1,7 +1,7 @@
+import humps from "humps";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { login } from "./endpoint";
 import { LoginFormInputs, UserType } from "./type";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import humps from "humps";
 
 export const handleLogin = async (
   data: LoginFormInputs,
@@ -12,7 +12,6 @@ export const handleLogin = async (
     if (response.ok) {
       const body = await response.json();
       router.push("/employee");
-      console.log(body.user);
       return humps.camelizeKeys(body.user) as UserType;
     } else {
       return "ログインに失敗しました";

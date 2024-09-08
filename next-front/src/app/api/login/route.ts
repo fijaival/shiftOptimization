@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
         const cookies = setCookieHeader.split(",");
         cookies.forEach((cookie) => {
           const token = cookie.split(";")[0];
-          console.log(token);
           response.headers.append("Set-Cookie", token);
         });
       }
