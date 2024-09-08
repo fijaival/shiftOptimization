@@ -1,7 +1,7 @@
 
 from .auth import User, UserSchema, TokenBlocklist
 from .constraints import Constraint, ConstraintSchema
-from .day_off_requests import DayOffRequest, DayOffRequestSchema
+from .day_off_requests import DayOffRequest, DayOffRequestSchema, getAllRequestSchema,getIndividualRequestSchema
 from .employee_types import EmployeeType, EmployeeTypeSchema
 from .employees import Employee, EmployeeSchema, employee_qualifications, Dependency, DependencySchema
 from .employee_constraints import EmployeeConstraint

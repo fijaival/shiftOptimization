@@ -11,6 +11,7 @@ day_off_requests_bp = Blueprint('day_off_requests', __name__)
 def get_all_requests(facility_id):
     year = request.args.get('year')
     month = request.args.get('month')
+    print(year, month)
     res = get_all_requests_service(facility_id, year, month)
     return jsonify({"requests": res}), 200
 
