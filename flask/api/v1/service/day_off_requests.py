@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import extract
+from sqlalchemy import extract, and_
 from typing import List
 from ..models import DayOffRequest, Employee, DayOffRequestSchema,getAllRequestSchema,getIndividualRequestSchema
 from ..validators import post_day_off_request_schema, put_day_off_request_schema
@@ -12,11 +12,16 @@ from sqlalchemy.orm import joinedload
 
 def get_all_requests_service(facility_id, year, month):
     with session_scope() as session:
-        results = session.query(Employee, DayOffRequest).outerjoin(DayOffRequest).filter(
-            Employee.facility_id == facility_id,
-            Employee.is_delete == 0
-        ).options(joinedload(Employee.day_off_requests)).all()
-
+        query = (
+            session.query(Employee, DayOffRequest)
+            .outerjoin(DayOffRequest, and_(
+                Employee.employee_id == DayOffRequest.employee_id,
+                extract('year', DayOffRequest.date) == year,
+                extract('month', DayOffRequest.date) == month
+            ))
+            .filter(Employee.facility_id == facility_id)
+        )        
+        results= query.all()
         employee_requests = defaultdict(list)
         for emp, req in results:
             if req is not None:
