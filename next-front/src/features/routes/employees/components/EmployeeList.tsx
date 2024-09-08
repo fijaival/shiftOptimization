@@ -1,10 +1,10 @@
 "use client";
 
-import React, { FC, useState, useEffect } from "react";
+import { useAuth } from "@/state/authContext";
+import { SimpleGrid, Skeleton, Stack, Text } from "@chakra-ui/react";
+import { FC, useEffect, useState } from "react";
 import { handleFetchEmployeesList } from "../hooks";
 import { Employee } from "../type";
-import { useAuth } from "@/state/authContext";
-import { Text, SimpleGrid, Center, Spinner, Stack } from "@chakra-ui/react";
 import EmployeeCard from "./EmployeeCard";
 export const EmployeeList: FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -52,10 +52,20 @@ export const EmployeeList: FC = () => {
           ))}
         </SimpleGrid>
       ) : (
-        <Center h="100vh">
-          {/* ぐるぐる回るローディング */}
-          <Spinner />
-        </Center>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} padding={6}>
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+          <Skeleton height="300px" width="430px" borderRadius="lg" />
+        </SimpleGrid>
       )}
     </Stack>
   );

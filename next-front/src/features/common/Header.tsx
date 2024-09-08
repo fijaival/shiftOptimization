@@ -1,10 +1,13 @@
-import { Box, Flex, Container, Heading } from "@chakra-ui/react";
+import { Box, Container, Flex, Heading } from "@chakra-ui/react";
 import Link from "next/link";
 import { FC } from "react";
 
 export const Header: FC = () => {
   return (
-    <Box px={4} bgColor="orange.300">
+    <Box
+      bgColor="orange.300"
+      sx={{ position: "fixed", width: "100%", zIndex: 999 }}
+    >
       <Container maxW="container.lg">
         <Flex
           as="header"
@@ -17,7 +20,10 @@ export const Header: FC = () => {
               シフト自動生成
             </Heading>
           </Link>
-          <Link href="/requests">シフト希望</Link>
+          <Box>
+            <Link href="/requests">シフト希望</Link>
+            <Link href="/employee">従業員一覧</Link>
+          </Box>
         </Flex>
       </Container>
     </Box>

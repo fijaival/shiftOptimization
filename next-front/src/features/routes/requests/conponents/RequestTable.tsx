@@ -168,7 +168,15 @@ export const RequestTable: FC = () => {
     <Stack>
       <Text fontSize="3xl">シフト希望</Text>
       {requests.length > 0 ? (
-        <TableContainer maxW="1500px" mx="auto" mb="10" width="90vw">
+        <TableContainer
+          maxW="1500px"
+          mx="auto"
+          mb="10"
+          width="90vw"
+          maxHeight="80vh"
+          overflowX="scroll"
+          overflowY="scroll"
+        >
           <Table
             variant="simple"
             size="sm"
@@ -176,14 +184,14 @@ export const RequestTable: FC = () => {
             sx={{
               borderCollapse: "collapse",
               "& td, & th": {
-                border: "1px solid",
+                border: "1px solid ",
                 borderColor: "orange.200",
               },
             }}
           >
             <Thead>
               <Tr>
-                <Th position="sticky" bg="white" left={0} zIndex={1}>
+                <Th position="sticky" bg="white" left={0} top={0} zIndex={3}>
                   従業員
                 </Th>
                 {augustDates.map((date, colIndex) => (
@@ -191,15 +199,18 @@ export const RequestTable: FC = () => {
                     key={date}
                     onClick={() => handleCellClick(-1, colIndex)}
                     cursor="pointer"
-                    bg={selectedColumn === colIndex ? "orange.400" : "inherit"}
+                    bg={selectedColumn === colIndex ? "orange.400" : "white"}
                     color={selectedColumn === colIndex ? "white" : "black"}
+                    position="sticky"
+                    top={0}
+                    zIndex={2}
                   >
                     {date.split("-")[2]}
                   </Th>
                 ))}
               </Tr>
               <Tr>
-                <Th position="sticky" bg="white" left={0} zIndex={1}>
+                <Th position="sticky" bg="white" left={0} top="24px" zIndex={3}>
                   曜日
                 </Th>
                 {augustDates.map((date, colIndex) => {
@@ -222,9 +233,10 @@ export const RequestTable: FC = () => {
                           ? "white"
                           : dayOfWeekColor
                       }
-                      bg={
-                        selectedColumn === colIndex ? "orange.400" : "inherit"
-                      }
+                      bg={selectedColumn === colIndex ? "orange.400" : "white"}
+                      position="sticky"
+                      top="24px"
+                      zIndex={1}
                     >
                       {dayOfWeek}
                     </Th>
@@ -305,7 +317,7 @@ export const RequestTable: FC = () => {
         </TableContainer>
       ) : (
         <Stack>
-          <Skeleton height="80px" width="90vw" />
+          <Skeleton height="0px" width="90vw" />
           <Skeleton height="40px" />
           <Skeleton height="40px" />
           <Skeleton height="40px" />
