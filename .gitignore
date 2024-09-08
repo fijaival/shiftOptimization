@@ -180,7 +180,7 @@ cython_debug/
 
 ### NextJS ###
 # dependencies
-/node_modules
+*/node_modules
 /.pnp
 .pnp.js
 
@@ -188,7 +188,7 @@ cython_debug/
 /coverage
 
 # next.js
-/.next/
+*/.next/
 /out/
 
 # production
